@@ -1,1 +1,2 @@
-worker: python daily_news.py
+web: python app.py
+

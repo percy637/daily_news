@@ -4,8 +4,7 @@ import daily_news
 
 app = Flask(__name__)
 
-client = openai.OpenAI(api_key="ton_api_key")  # Remplace avec ta clé API
-
+client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  # Remplace avec ta clé API
 
 @app.route("/")
 def home():
