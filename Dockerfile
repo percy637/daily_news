@@ -11,5 +11,5 @@ COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Définition de la commande de démarrage
-CMD ["python", "send_notif.py"]
+CMD ["python", "app.py"]
 
