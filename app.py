@@ -8,15 +8,12 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    title = "Tesla atteint un nouveau record de ventes"
-    link = "https://example.com/article"
-    #summary = daily_news.summarize_article(title, link)
-    summary  = "test de summary"
-    return render_template("index.html", title=title, link=link, summary=summary)
+    articles = daily_news.get_motley_news()
+    summaries = [{"title": article["title"], "summary": daily_news.summarize_article(article["title"], article["link"])} for article in articles]
+    daily_news.send_notification(summaries)
+    return render_template('index.html', summaries=summaries)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 
-"""news_summary = get_motley_news()
-send_notification(news_summary)
-print(news_summary)"""
+#écouter sur : dailynews-production.up.railway.app

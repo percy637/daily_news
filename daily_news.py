@@ -2,6 +2,7 @@ import os
 from playwright.sync_api import sync_playwright
 import openai  # Utilisation de l'API pour résumer
 import requests
+import diskcache as dc
 
 
 URL = "https://www.fool.com/investing-news/"
@@ -15,8 +16,18 @@ if not api_key:
 
 # Initialiser le client OpenAI
 client = openai.OpenAI(api_key=api_key)
+# Initialisation du cache sur disque
+cache = dc.Cache('./cache')  # Le cache sera stocké dans le dossier './cache'
 
 def summarize_article(title, link):
+
+    # Vérifier si le résumé est déjà dans le cache
+    if title in cache:
+        print(f"Récupération du cache pour l'article : {title}")
+        return cache[title]  # Si le résumé existe déjà, on le renvoie
+
+    # Si le résumé n'existe pas dans le cache, on fait appel à l'API OpenAI
+    print(f"Appel à OpenAI pour : {title}")
     prompt = f"""
     Voici un titre d'article : {title}.
     Résume cet article de manière claire, en incluant le nom de l'entreprise mentionnée dans l'article et les points les plus importants. Le résumé doit être pertinent, en mettant en évidence les facteurs qui expliquent la situation de l'entreprise et ses perspectives d'avenir.
@@ -33,7 +44,15 @@ def summarize_article(title, link):
         ]
     )
 
-    return response.choices[0].message.content.strip()
+    # Le résumé de l'article
+    summary = response.choices[0].message.content.strip()
+
+    # Enregistrer le résumé dans le cache avec une expiration de 24 heures (86400 secondes)
+    cache[title] = summary
+    cache.expire(title, 86400)  # Expiration après 24h
+
+
+    return summary
 
 
 
@@ -71,8 +90,8 @@ def send_notification(message):
         'token': api_token,
         'message': message,
         'title': 'Motley Fool - News du Jour',  # Titre de la notification
-        'url' : "http://www.apple.com/fr/",  
-        'url_title' : "Lire l'article"
+        'url' : "dailynews-production.up.railway.app",  
+        'url_title' : "Pour voir toutes les infos, cliquer ici"
     }
     
     response = requests.post(url, data=payload)
