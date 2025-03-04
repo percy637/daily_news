@@ -1,10 +1,19 @@
 from flask import Flask, render_template
 import openai
 import daily_news
+import os
 
 app = Flask(__name__)
 
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  # Remplace avec ta clé API
+# Récupérer la clé API depuis les variables d'environnement
+api_key = os.getenv("OPENAI_API_KEY")
+
+# Vérifier que la clé est bien récupérée
+if not api_key:
+    raise ValueError("La clé API OpenAI n'est pas définie !")
+
+# Initialiser le client OpenAI
+client = openai.OpenAI(api_key=api_key)
 
 @app.route("/")
 def home():
