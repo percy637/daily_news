@@ -4,3 +4,4 @@ beautifulsoup4
 pushover
 playwright
 flask
+diskcache
