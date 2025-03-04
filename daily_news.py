@@ -6,12 +6,15 @@ import requests
 
 URL = "https://www.fool.com/investing-news/"
 
+# Récupérer la clé API depuis les variables d'environnement
+api_key = os.getenv("OPENAI_API_KEY")
 
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  # Création du client
+# Vérifier que la clé est bien récupérée
+if not api_key:
+    raise ValueError("La clé API OpenAI n'est pas définie !")
 
-import openai
-
-openai.api_key = "ton_api_key"  # Remplace par ta clé API
+# Initialiser le client OpenAI
+client = openai.OpenAI(api_key=api_key)
 
 def summarize_article(title, link):
     prompt = f"""
@@ -80,6 +83,6 @@ def send_notification(message):
 
 
 # Exécution et affichage
-news_summary = get_motley_news()
+"""news_summary = get_motley_news()
 send_notification(news_summary)
-print(news_summary)
+print(news_summary)"""
